@@ -10,6 +10,9 @@ Sub vba_of_wallstreet()
     Dim volume As Double
     Dim year_change As Double
     Dim percent_change As Double
+    Dim greatest_volume As Double
+    Dim greatest_increase As Double
+    Dim greatest_decrease As Double
 
     For Each ws In Worksheets
         'Set summary table headers
@@ -68,19 +71,20 @@ Sub vba_of_wallstreet()
         ws.Range("O3").Value = "Greatest % Decrease"
         ws.Range("O4").Value = "Greatest Total Volume"
         
-        row_count = ws.Range("I" & Rows.count).End(xlUp).row
-        greatest_increase = Application.WorksheetFunction.Max(ws.Range("K2:K" & row_count).Value)
-        greatest_decrease = Application.WorksheetFunction.Min(ws.Range("K2:K" & row_count).Value)
-        greatest_volume = Application.WorksheetFunction.Max(ws.Range("L2:L" & row_count).Value)
+        'set variables
+        column_count = ws.Range("I" & Rows.count).End(xlUp).row
+        greatest_increase = Application.WorksheetFunction.Max(ws.Range("K2:K" & column_count).Value)
+        greatest_decrease = Application.WorksheetFunction.Min(ws.Range("K2:K" & column_count).Value)
+        greatest_volume = Application.WorksheetFunction.Max(ws.Range("L2:L" & column_count).Value)
         
         For row = 2 To row_count
             ticker = ws.Cells(row, 9).Value
             If ws.Cells(row, 11).Value = greatest_increase Then
                 ws.Range("P2") = ticker
-                ws.Range("Q2") = greatest_increase
+                ws.Range("Q2") = FormatPercent(greatest_increase)
             ElseIf ws.Cells(row, 11).Value = greatest_decrease Then
                 ws.Range("P3") = ticker
-                ws.Range("Q3") = greatest_decrease
+                ws.Range("Q3") = FormatPercent(greatest_decrease)
             End If
             'separate out conditional for volume since it could also meet one of the above criteria
             If ws.Cells(row, 12).Value = greatest_volume Then
@@ -88,8 +92,8 @@ Sub vba_of_wallstreet()
                 ws.Range("Q4") = greatest_volume
             End If
         Next row
-
-            
+    
     Next ws
 
 End Sub
+
